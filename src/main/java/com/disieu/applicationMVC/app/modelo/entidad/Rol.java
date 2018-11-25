@@ -1,10 +1,14 @@
 package com.disieu.applicationMVC.app.modelo.entidad;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -15,7 +19,7 @@ import javax.persistence.Table;
  * @date 24 nov. 2018
  */
 @Entity
-@Table(name = "rols")
+@Table(name = "rol")
 public class Rol extends EntidadGenerica {
 
 	private static final long serialVersionUID = 4646146230972442367L;
@@ -25,7 +29,8 @@ public class Rol extends EntidadGenerica {
 	@Column(name = "id_rol")
 	private Integer id_rolPrimaria;
 
-	@Column(name = "M_usuario_idM_usuario")
+	@ManyToOne(fetch = FetchType.LAZY, cascade= CascadeType.ALL)
+	@JoinColumn(name = "M_usuario_idM_usuario")
 	private Usuario usuario;
 
 	@Column(name = "rol")

@@ -47,7 +47,7 @@ public class Usuario extends EntidadGenerica {
 	@Column(name = "activo")
 	private Boolean activo;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario", cascade = CascadeType.ALL)
 	private List<Rol> listRol;
 
 	/**
