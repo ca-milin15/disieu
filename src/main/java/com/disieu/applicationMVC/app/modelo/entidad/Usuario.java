@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,7 +47,7 @@ public class Usuario extends EntidadGenerica {
 	@Column(name = "activo")
 	private Boolean activo;
 
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.ALL)
 	private List<Rol> listRol;
 
 	/**
