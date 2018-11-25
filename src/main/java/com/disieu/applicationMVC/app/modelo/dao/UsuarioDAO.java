@@ -24,4 +24,15 @@ public interface UsuarioDAO extends JpaRepository<Usuario, Integer> {
 	 * @date 24 nov. 2018
 	 */
 	Usuario findByUsuarioAndClave(String usuario, String clave);
+
+	/**
+	 * 
+	 *
+	 *
+	 * @param usuario
+	 * @return
+	 * @author Camilo Rivera
+	 * @date 24 nov. 2018
+	 */
+	Usuario findByUsuario(String usuario);
 }

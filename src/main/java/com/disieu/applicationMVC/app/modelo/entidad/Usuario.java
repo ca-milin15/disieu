@@ -47,7 +47,7 @@ public class Usuario extends EntidadGenerica {
 	private Boolean activo;
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-	private List<Rol> rol;
+	private List<Rol> listRol;
 
 	/**
 	 * Se construye el objeto a partir de
@@ -158,17 +158,17 @@ public class Usuario extends EntidadGenerica {
 	}
 
 	/**
-	 * @return the rol
+	 * @return the listRol
 	 */
-	public List<Rol> getRol() {
-		return rol;
+	public List<Rol> getListRol() {
+		return listRol;
 	}
 
 	/**
-	 * @param rol the rol to set
+	 * @param listRol the listRol to set
 	 */
-	public void setRol(List<Rol> rol) {
-		this.rol = rol;
+	public void setListRol(List<Rol> listRol) {
+		this.listRol = listRol;
 	}
 
 }

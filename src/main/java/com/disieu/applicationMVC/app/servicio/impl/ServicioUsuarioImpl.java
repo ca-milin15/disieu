@@ -20,11 +20,15 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 
 	@Autowired
 	private UsuarioDAO usuarioDAO;
+	
+	@Autowired
+	private JpaUserDetailsService jpaUserDetailsService;
 
 	@Override
 	public RespuestaUsuario autenticarUsuario(String usuario, String clave) {
 		Usuario usuarioEncontrado = usuarioDAO.findByUsuarioAndClave(usuario, clave);
 		if (usuarioEncontrado != null) {
+			jpaUserDetailsService.loadUserByUsername(usuario);
 			return new RespuestaUsuario(usuarioEncontrado);
 		}
 		return null;
