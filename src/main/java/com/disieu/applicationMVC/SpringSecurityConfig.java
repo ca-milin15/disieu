@@ -33,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/","/disibackend/servicio/usuario/**").permitAll().anyRequest()
+		http.authorizeRequests().antMatchers("/").permitAll().anyRequest()
 				.authenticated()
 				.and()
 				// 'authenticationManager()' es un mètodo que hereda del padre 'WebSecurityConfigurerAdapter'

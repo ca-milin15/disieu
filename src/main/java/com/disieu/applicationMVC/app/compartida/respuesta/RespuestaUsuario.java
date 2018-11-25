@@ -3,6 +3,7 @@ package com.disieu.applicationMVC.app.compartida.respuesta;
 import java.io.Serializable;
 
 import com.disieu.applicationMVC.app.modelo.entidad.Usuario;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
@@ -15,9 +16,14 @@ public class RespuestaUsuario implements Serializable {
 
 	private static final long serialVersionUID = 5937683409253201392L;
 
+	@JsonProperty("username")
 	private String usuario;
 
+	@JsonProperty("name")
 	private String nombre;
+
+	@JsonProperty("token")
+	private String token;
 
 	/**
 	 * Se construye el objeto a partir de
@@ -40,6 +46,20 @@ public class RespuestaUsuario implements Serializable {
 	public RespuestaUsuario(Usuario usuarioEncontrado) {
 		this.usuario = usuarioEncontrado.getUsuario();
 		this.nombre = usuarioEncontrado.getNombre() + usuarioEncontrado.getApellido();
+	}
+
+	/**
+	 * 
+	 * Se construye el objeto desde la clase JWTAuthentication
+	 *
+	 * @param name
+	 * @param token2
+	 * @author Camilo Rivera
+	 * @date 25 nov. 2018
+	 */
+	public RespuestaUsuario(String name, String token2) {
+		this.usuario = name;
+		this.token = token2;
 	}
 
 	/**
@@ -68,6 +88,20 @@ public class RespuestaUsuario implements Serializable {
 	 */
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
+	}
+
+	/**
+	 * @return the token
+	 */
+	public String getToken() {
+		return token;
+	}
+
+	/**
+	 * @param token the token to set
+	 */
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }
