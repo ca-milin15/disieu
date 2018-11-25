@@ -1,6 +1,7 @@
 package com.disieu.applicationMVC.app.configuracion;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.disieu.applicationMVC.app.compartida.respuesta.RespuestaUsuario;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -49,6 +51,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
 		super();
 		this.authenticationManager = authenticationManager;
+		// Se personaliza ruta para logueo
+		setRequiresAuthenticationRequestMatcher(
+				new AntPathRequestMatcher("/disibackend/servicio/usuario/autenticacion", "POST"));
 	}
 
 	/*
@@ -64,16 +69,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
-		// Se personaliza ruta para logueo
 		// Este còdigo de reutilizado de la clase que extiende
 		// 'UsernamePasswordAuthenticationFilter'
 		String username = obtainUsername(request);
 		String password = obtainPassword(request);
 
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String hashedPassword = passwordEncoder.encode(password);
+		/*
+		 * PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); String
+		 * hashedPassword = passwordEncoder.encode(password);
+		 * 
+		 * Código para genear Bcrypt
+		 */
 
-		System.out.println(hashedPassword);
 		if (username == null) {
 			username = "";
 		}
@@ -104,13 +111,20 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 
-		String token = Jwts.builder().setSubject(authResult.getName())
-				.signWith(SignatureAlgorithm.HS512, "Alguna.clave.secreta".getBytes()).compact();
+		Claims claims = Jwts.claims();
+		claims.put("roles", new ObjectMapper().writeValueAsString(authResult.getAuthorities()));
+
+		String token = Jwts.builder().setClaims(claims).setSubject(authResult.getName())
+				.signWith(SignatureAlgorithm.HS512, "Alguna.clave.secreta".getBytes()).setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + 3600000L)).compact();
+
 		new RespuestaUsuario(authResult.getName(), token);
+
 		response.addHeader("Authorization", "Bearer " + token);
+
 		Map<String, Object> body = new HashMap<>();
 		body.put("token", token);
-		body.put("user", authResult.getAuthorities());
+		body.put("user", authResult.getName());
 		body.put("mensaje", "exitoso");
 
 		response.getWriter().write(new ObjectMapper().writeValueAsString(body));
