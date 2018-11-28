@@ -1,8 +1,11 @@
 package com.disieu.applicationMVC.app.controlador;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +46,20 @@ public class UsuarioControlador {
 			return new ResponseEntity<RespuestaUsuario>(respuestaUsuario, HttpStatus.OK);
 		}
 		return new ResponseEntity<RespuestaUsuario>(respuestaUsuario, HttpStatus.NOT_FOUND);
+	}
+
+	/**
+	 * 
+	 *
+	 *
+	 * @return
+	 * @author Camilo Rivera
+	 * @date 27 nov. 2018
+	 */
+	@GetMapping
+	public ResponseEntity<List<RespuestaUsuario>> listarUsuario() {
+		return new ResponseEntity<List<RespuestaUsuario>>(servicioUsuario.listarUsuario(), HttpStatus.OK);
+
 	}
 
 }
