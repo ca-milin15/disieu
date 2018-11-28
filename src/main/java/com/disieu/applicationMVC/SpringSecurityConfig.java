@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.disieu.applicationMVC.app.configuracion.JWTAuthenticationFilter;
+import com.disieu.applicationMVC.app.configuracion.JwtAuthorizationFilter;
 import com.disieu.applicationMVC.app.servicio.impl.JpaUserDetailsService;
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -33,11 +34,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/").permitAll().anyRequest()
+		http.authorizeRequests().antMatchers("/").permitAll()
+				.anyRequest()
 				.authenticated()
 				.and()
 				// 'authenticationManager()' es un mètodo que hereda del padre 'WebSecurityConfigurerAdapter'
 				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
+				.addFilter(new JwtAuthorizationFilter(authenticationManager()))
 				.csrf().disable().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		super.configure(http);

@@ -81,9 +81,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			Object roles = token.get("roles");
 
 			Collection<? extends GrantedAuthority> authorities = Arrays
-					.asList(new ObjectMapper().readValue(roles.toString().getBytes(), SimpleGrantedAuthority[].class));
+					.asList(new ObjectMapper()
+							//Esta linea es para combinar la clase impleGrantedAuthorityMixin.class con la original
+							//asi se le setea el constructor por defecto
+							.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
+							.readValue(roles.toString().getBytes(), SimpleGrantedAuthority[].class));
 
-			authenticationToken = new UsernamePasswordAuthenticationToken(username, authorities);
+			authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
 
 		}
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);

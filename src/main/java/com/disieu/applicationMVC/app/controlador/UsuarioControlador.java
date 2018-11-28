@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,7 +57,8 @@ public class UsuarioControlador {
 	 * @author Camilo Rivera
 	 * @date 27 nov. 2018
 	 */
-	@GetMapping
+	@GetMapping("/listar")
+	@Secured("ROLE_ADMIN")
 	public ResponseEntity<List<RespuestaUsuario>> listarUsuario() {
 		return new ResponseEntity<List<RespuestaUsuario>>(servicioUsuario.listarUsuario(), HttpStatus.OK);
 
