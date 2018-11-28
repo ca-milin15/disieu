@@ -124,6 +124,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		Map<String, Object> body = new HashMap<>();
 		body.put("token", token);
+		body.put("roles", authResult.getAuthorities());
 		body.put("user", authResult.getName());
 		body.put("mensaje", "exitoso");
 
