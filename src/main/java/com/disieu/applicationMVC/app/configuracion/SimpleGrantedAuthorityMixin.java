@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Se construye esta clase para crear un método constructor vacío a la clase
  * SimpleGrantedAuthority, ya que èsta no lo tiene y tampoco se puede modificar.
+ * Es un complemento a la clase original.
  * La combinación de esta clase y la original 'SimpleGrantedAuthority' se hace
  * en el AuthorizationFilter
  *

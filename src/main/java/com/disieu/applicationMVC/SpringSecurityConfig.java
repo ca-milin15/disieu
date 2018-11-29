@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.disieu.applicationMVC.app.configuracion.JWTAuthenticationFilter;
 import com.disieu.applicationMVC.app.configuracion.JwtAuthorizationFilter;
+import com.disieu.applicationMVC.app.servicio.ServicioJwt;
 import com.disieu.applicationMVC.app.servicio.impl.JpaUserDetailsService;
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -25,6 +26,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JpaUserDetailsService userDetailsService;
 
+	@Autowired
+	private ServicioJwt servicioJwt;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -39,8 +42,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticated()
 				.and()
 				// 'authenticationManager()' es un mètodo que hereda del padre 'WebSecurityConfigurerAdapter'
-				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
-				.addFilter(new JwtAuthorizationFilter(authenticationManager()))
+				.addFilter(new JWTAuthenticationFilter(authenticationManager(), servicioJwt))
+				.addFilter(new JwtAuthorizationFilter(authenticationManager(), servicioJwt))
 				.csrf().disable().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		super.configure(http);

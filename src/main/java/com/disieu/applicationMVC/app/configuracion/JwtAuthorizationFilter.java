@@ -1,9 +1,6 @@
 package com.disieu.applicationMVC.app.configuracion;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,17 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.disieu.applicationMVC.app.modelo.entidad.Usuario;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import com.disieu.applicationMVC.app.servicio.ServicioJwt;
 
 /**
  * 
@@ -33,6 +23,8 @@ import io.jsonwebtoken.Jwts;
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
+	private ServicioJwt servicioJwt;
+
 	/**
 	 * 
 	 * Se construye el objeto a partir de
@@ -41,8 +33,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	 * @author Camilo Rivera
 	 * @date 27 nov. 2018
 	 */
-	public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ServicioJwt servicioJwt) {
 		super(authenticationManager);
+		this.servicioJwt = servicioJwt;
 	}
 
 	/*
@@ -64,30 +57,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			return;
 		}
 
-		Boolean validoToken;
-		Claims token = null;
-		try {
-			token = Jwts.parser().setSigningKey("Alguna.clave.secreta".getBytes())
-					.parseClaimsJws(header.replace("Bearer ", "")).getBody();
-			validoToken = true;
-		} catch (JwtException | IllegalArgumentException e) {
-			validoToken = false;
-		}
-
 		UsernamePasswordAuthenticationToken authenticationToken = null;
 
-		if (validoToken) {
-			String username = token.getSubject();
-			Object roles = token.get("roles");
-
-			Collection<? extends GrantedAuthority> authorities = Arrays
-					.asList(new ObjectMapper()
-							//Esta linea es para combinar la clase impleGrantedAuthorityMixin.class con la original
-							//asi se le setea el constructor por defecto
-							.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
-							.readValue(roles.toString().getBytes(), SimpleGrantedAuthority[].class));
-
-			authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+		if (servicioJwt.validarToken(header)) {
+			authenticationToken = new UsernamePasswordAuthenticationToken(servicioJwt.obtenerUsername(header), null,
+					servicioJwt.getRoles(header));
 
 		}
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);

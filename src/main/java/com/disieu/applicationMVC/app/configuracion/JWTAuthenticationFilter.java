@@ -1,7 +1,6 @@
 package com.disieu.applicationMVC.app.configuracion;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,17 +13,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.disieu.applicationMVC.app.compartida.respuesta.RespuestaUsuario;
+import com.disieu.applicationMVC.app.servicio.ServicioJwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * En esta clase se personaliza el filtro de logueo. Este logueo no requiere de
@@ -41,6 +35,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 	private AuthenticationManager authenticationManager;
 
+	private ServicioJwt servicioJwt;
 	/**
 	 * Se construye el objeto a partir del atributo anteriormente creado
 	 *
@@ -48,9 +43,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	 * @author Camilo Rivera
 	 * @date 25 nov. 2018
 	 */
-	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, ServicioJwt servicioJwt) {
 		super();
 		this.authenticationManager = authenticationManager;
+		this.servicioJwt = servicioJwt;
 		// Se personaliza ruta para logueo
 		setRequiresAuthenticationRequestMatcher(
 				new AntPathRequestMatcher("/disibackend/servicio/usuario/autenticacion", "POST"));
@@ -111,12 +107,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 
-		Claims claims = Jwts.claims();
-		claims.put("roles", new ObjectMapper().writeValueAsString(authResult.getAuthorities()));
-
-		String token = Jwts.builder().setClaims(claims).setSubject(authResult.getName())
-				.signWith(SignatureAlgorithm.HS512, "Alguna.clave.secreta".getBytes()).setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + 3600000L)).compact();
+		String token = servicioJwt.crearToken(authResult);
 
 		new RespuestaUsuario(authResult.getName(), token);
 
