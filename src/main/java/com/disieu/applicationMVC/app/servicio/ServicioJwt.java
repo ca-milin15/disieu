@@ -36,7 +36,9 @@ public interface ServicioJwt {
 	public String crearToken(Authentication authentication) throws JsonProcessingException;
 
 	/**
-	 * Este método valida si el token requiere autenticción de nuevo.
+	 * Este método valida si el token requiere autenticación de nuevo.
+	 * Valida la firma del token, y si ya expiró
+	 * 
 	 *
 	 *
 	 * @param token

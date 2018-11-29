@@ -1,6 +1,7 @@
 package com.disieu.applicationMVC.app.servicio.impl;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.disieu.applicationMVC.app.configuracion.SimpleGrantedAuthorityMixin;
 import com.disieu.applicationMVC.app.servicio.ServicioJwt;
+import com.disieu.applicationMVC.app.utilidades.UtilidadesGenerales;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -45,7 +47,7 @@ public class ServicioJwtImpl implements ServicioJwt {
 
 		String token = Jwts.builder().setClaims(claims).setSubject(authentication.getName())
 				.signWith(SignatureAlgorithm.HS512, "Alguna.clave.secreta".getBytes()).setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + 3600000L)).compact();
+				.setExpiration(new Date(System.currentTimeMillis() + 60000L)).compact();
 
 		return token;
 	}
@@ -60,8 +62,11 @@ public class ServicioJwtImpl implements ServicioJwt {
 	@Override
 	public Boolean validarToken(String token) {
 		try {
-			obtenerClaims(token);
-			return true;
+			Claims claims = obtenerClaims(token);
+			if (LocalDateTime.now().isBefore(UtilidadesGenerales.convertDateToLocalDateTime(claims.getExpiration()))) {
+				return true;
+			}
+			return false;
 		} catch (Exception e) {
 			return false;
 		}
@@ -81,9 +86,9 @@ public class ServicioJwtImpl implements ServicioJwt {
 	@Override
 	public Collection<? extends GrantedAuthority> getRoles(String token)
 			throws JsonParseException, JsonMappingException, IOException {
-		
+
 		Object roles = obtenerClaims(token).get("roles");
-		
+
 		Collection<? extends GrantedAuthority> authorities = Arrays.asList(new ObjectMapper()
 				// Esta linea es para combinar la clase impleGrantedAuthorityMixin.class con la
 				// original
